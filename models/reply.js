@@ -5,6 +5,8 @@ var ReplySchema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	date: { type: Date, default: Date.now() },
 
+	text: { type: String, required: true },
+
 	nestedLevel: { type: Number, required: true },
 
 	message: { type: Schema.Types.ObjectId, ref: "Message", required: true },

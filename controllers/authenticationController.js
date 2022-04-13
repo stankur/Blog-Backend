@@ -27,10 +27,9 @@ exports.login_post = (req, res, next) => {
 							iat: Date.now(),
 						};
 
-						var signedToken = jsonWebToken.sign(
-							jwtPayload,
-							process.env.SECRET
-						);
+						var signedToken =
+							"Bearer " +
+							jsonWebToken.sign(jwtPayload, process.env.SECRET);
 
 						return res.json({ token: signedToken });
 					}

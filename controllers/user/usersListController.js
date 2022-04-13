@@ -6,7 +6,6 @@ var async = require("async");
 var errorSender = require("../helpers/errorSender");
 
 var bcrypt = require("bcryptjs");
-var passport = require("passport");
 
 var linkGenerator = require("../helpers/linkGenerator");
 
@@ -17,7 +16,7 @@ exports.users_list_get = (req, res, next) => {
 				User.countDocuments({}, callback);
 			},
 			users: function (callback) {
-				User.find({}, callback);
+				User.find({}, { password: 0 }, callback);
 			},
 		},
 		(error, results) => {
@@ -64,7 +63,7 @@ exports.users_list_get = (req, res, next) => {
 				links: completeLinks,
 			};
 
-			res.json(responseJson);
+			return res.json(responseJson);
 		}
 	);
 };
@@ -87,7 +86,7 @@ exports.users_list_post = (req, res, next) => {
 
 		newUser.save((err) => {
 			if (err) {
-				next(err);
+				return next(err);
 			}
 
 			var selfLink = linkGenerator.generateSingleLink(
@@ -112,19 +111,22 @@ exports.users_list_post = (req, res, next) => {
 				links: completeLinks,
 			};
 
-			res.json(responseJson);
+			return res.json(responseJson);
 		});
 	};
 
 	User.find({ username: req.body.username }, (err, foundUsers) => {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 
 		if (foundUsers.length > 0) {
-			errorSender.generateErrorResponseJson(res, "username is used");
+			return errorSender.generateErrorResponseJson(
+				res,
+				"username is used"
+			);
 		} else {
-			bcrypt.hash(req.body.password, 10, saveUser);
+			return bcrypt.hash(req.body.password, 10, saveUser);
 		}
 	});
 };
